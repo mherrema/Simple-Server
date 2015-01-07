@@ -1,6 +1,6 @@
-import java.io.BufferedReader;
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
 
 public class server {
@@ -8,12 +8,12 @@ public class server {
 	
 	public static void main(String[] args) throws IOException {
         
-        if (args.length != 1) {
-            System.err.println("Usage: java server <port number>");
-            System.exit(1);
-        }
+//        if (args.length != 1) {
+//            System.err.println("Usage: java server <port number>");
+//            System.exit(1);
+//        }
  
-        int portNumber = Integer.parseInt(args[0]);
+        int portNumber = Integer.parseInt("4444");
  
         try ( 
             ServerSocket serverSocket = new ServerSocket(portNumber);
@@ -64,23 +64,38 @@ public class server {
             else{
             	InputStream fileIn = null;
                 try {
+                	
+                	String[] fileNameArray = inputHeader[1].split(".");
+                	System.out.println(fileNameArray[0]);
+                	
+                	
                    fileIn = new FileInputStream(file); // Can also pass the constructor a String
-
-                    int line_of_text = fileIn.read(); // read one line of text
-
                     byte[] buffer = new byte[1024];
                     int amount_read = fileIn.read(buffer); // read up to 1024 bytes of raw data
-                }
+
+                    // You need to wrap the InputStream inside a BufferedReader to
+                    // access character data.
+                    BufferedReader fileReader = new BufferedReader(new InputStreamReader(fileIn));
+
+                    String line_of_text = fileReader.readLine(); // read one line of text
+                    out.println(line_of_text);
+                    // Two other options if you are reading the file as text only are FileReader and
+                    // Scanner:
+
+                    BufferedReader fileReader2 = new BufferedReader(new FileReader(file));
+                    fileReader2.readLine();
+
+                    Scanner input = new Scanner(file);
+                    while (input.hasNext()) {
+                        input.nextLine();
+                   }
+            }
                 finally{
                 	
                 }
-            }
-//            out.println();
             
-//            processInput(inputHeader[1]);
-            
-            
-        } catch (IOException e) {
+        }
+            } catch (IOException e) {
             System.out.println("Exception caught when trying to listen on port "
                 + portNumber + " or listening for a connection");
             System.out.println(e.getMessage());
